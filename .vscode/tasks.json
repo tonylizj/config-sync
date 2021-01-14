@@ -7,8 +7,20 @@
 			"type": "npm",
 			"script": "watch",
 			"problemMatcher": [
-                "$ts-webpack-watch",
-                "$tslint-webpack-watch"
+				{
+					"base": "$ts-webpack-watch",
+					"background": {
+						"activeOnStart": true,
+						"beginsPattern": {
+							"regexp": "^asset.+\\[emitted\\]"
+						},
+						"endsPattern": {
+							"regexp": "^webpack.+compiled successfully in"
+						}
+					}
+				},
+                // "$ts-webpack-watch",
+                // "$tslint-webpack-watch"
 			],
 			"isBackground": true,
 			"presentation": {
