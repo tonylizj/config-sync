@@ -11,14 +11,14 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:config-sync.helloWorld"
+		"onCommand:config-sync.uploadFile"
 	],
 	"main": "./dist/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "config-sync.helloWorld",
-				"title": "Hello World"
+				"command": "config-sync.uploadFile",
+				"title": "config-sync: Upload Configuration File"
 			}
 		]
 	},

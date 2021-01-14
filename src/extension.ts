@@ -1,27 +1,45 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+const extName = (str: string) => `config-sync: ${str}`;
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "config-sync" is now active!');
+export const activate = (context: vscode.ExtensionContext) => {
+	console.log('config-sync is now active.');
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('config-sync.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
+	const uploadFile = vscode.commands.registerCommand('config-sync.uploadFile', async () => {
+		const input = await vscode.window.showInputBox({
+			prompt: extName(`Please enter the file name relative to workspace directory. For example: '.gitignore' or src/config/.eslintrc.js`),
+			ignoreFocusOut: true,
+			placeHolder: 'File name'
+		});
 
-		// Display a message box to the user
-		vscode.window.showInformationMessage('test message again from config-sync!');
+		if (input === undefined || input === '') {
+			vscode.window.showInformationMessage(extName('Input was not captured.'));
+			return;
+		}
+
+		const file = await vscode.workspace.findFiles(input, '', 1);
+		
+		if (file.length === 0 || file[0] === undefined) {
+			vscode.window.showInformationMessage(extName(`Invalid file name: '${input}'. Please make sure this is a file name relative to workspace directory.`));
+			return;
+		}
+
+		console.log(file[0]);
+
+		vscode.window.showInformationMessage(extName(`Valid file located: '${input}'.`));
+
+		const contents = await vscode.workspace.fs.readFile(file[0]);
+		const contentsString = Buffer.from(contents).toString();
+		console.log(contentsString);
+
+		// TODO: oauth user login
+		// save configs to database with user id (under sets of configs under names such as 'react app')
+		// fetch configs from database (and check for file name conflict)
+		// about page?
+
 	});
 
-	context.subscriptions.push(disposable);
-}
+	context.subscriptions.push(uploadFile);
+};
 
-// this method is called when your extension is deactivated
-export function deactivate() {}
+export const deactivate = () => {};
