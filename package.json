@@ -11,19 +11,44 @@
 		"Other"
 	],
 	"activationEvents": [
+		"onCommand:config-sync.addDatabase",
 		"onCommand:config-sync.uploadFile",
-		"onCommand:config-sync.viewFiles"
+		"onCommand:config-sync.storeFile",
+		"onCommand:config-sync.viewFiles",
+		"onCommand:config-sync.viewFilesLocal",
+		"onCommand:config-sync.getFile",
+		"onCommand:config-sync.getFileLocal"
 	],
 	"main": "./dist/extension.js",
 	"contributes": {
 		"commands": [
 			{
+				"command": "config-sync.addDatabase",
+				"title": "config-sync: Add Connection to MongoDB Database"
+			},
+			{
 				"command": "config-sync.uploadFile",
-				"title": "config-sync: Upload Configuration File"
+				"title": "config-sync: Upload Configuration File (to remote database)"
+			},
+			{
+				"command": "config-sync.storeFile",
+				"title": "config-sync: Store Configuration File (to local storage)"
 			},
 			{
 				"command": "config-sync.viewFiles",
 				"title": "config-sync: View Uploaded Configuration Files"
+			},
+			{
+				"command": "config-sync.viewFilesLocal",
+				"title": "config-sync: View Locally Stored Configuration Files"
+			},
+			{
+				"command": "config-sync.getFile",
+				"title": "config-sync: Retrieve Configuration File (from remote database) And Write It to the Workspace Directory"
+			},
+			{
+				"command": "config-sync.getFileLocal",
+				"title": "config-sync: Retrieve Configuration File (from local storage) And Write It to the Workspace Directory"
 			}
 		]
 	},
@@ -55,7 +80,8 @@
 		"webpack-cli": "^4.3.1"
 	},
 	"dependencies": {
-		"dotenv": "^8.2.0",
-		"mongoose": "^5.11.12"
+		"@types/mongoose": "^5.10.3",
+		"mongoose": "^5.11.12",
+		"saslprep": "^1.0.3"
 	}
 }

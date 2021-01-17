@@ -15,7 +15,7 @@
 							"regexp": "^asset.+\\[emitted\\]"
 						},
 						"endsPattern": {
-							"regexp": "^webpack.+compiled successfully in"
+							"regexp": "^webpack.+compiled.+in"
 						}
 					}
 				},
