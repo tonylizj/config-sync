@@ -13,7 +13,7 @@ const ConfigFileSchema = new mongoose.Schema({
   }
 });
 
-interface ConfigFileInterface extends mongoose.Document {
+export interface ConfigFileInterface extends mongoose.Document {
   fileName: string;
   contents: string;
 }

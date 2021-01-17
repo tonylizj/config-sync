@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as mongoose from 'mongoose';
-import ConfigFile from './ConfigFile';
+import ConfigFile, { ConfigFileInterface } from './ConfigFile';
 
 const extName = (str: string) => `config-sync: ${str}`;
 
@@ -221,7 +221,7 @@ export const activate = async (context: vscode.ExtensionContext) => {
       return;
     }
 
-    const configFiles = await ConfigFile.find().exec().then((files) => files.map((x) => `${x.fileName.split('-').slice(x.fileName.split('-').length - 2, x.fileName.split('-').length - 1)} (${x.fileName.split('-').pop()})`));
+    const configFiles = await ConfigFile.find().exec().then((files: ConfigFileInterface[]) => files.map((x: ConfigFileInterface) => `${x.fileName.split('-').slice(x.fileName.split('-').length - 2, x.fileName.split('-').length - 1)} (${x.fileName.split('-').pop()})`));
 
     vscode.window.showInformationMessage(configFiles.toString());
   });
@@ -274,7 +274,7 @@ export const activate = async (context: vscode.ExtensionContext) => {
       vscode.window.showErrorMessage(extName('Input was not captured.'));
       return;
     }
-    const files = configFiles.filter((x) => x.fileName === generateFilename(fileName, alias));
+    const files = configFiles.filter((x: ConfigFileInterface) => x.fileName === generateFilename(fileName, alias));
     if (files.length === 0) {
       vscode.window.showErrorMessage(extName(`No file with file name '${fileName}' and alias '${alias}' could be found in the database.`));
       return;
