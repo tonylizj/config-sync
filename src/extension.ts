@@ -72,7 +72,7 @@ export const activate = async (context: vscode.ExtensionContext) => {
     });
   });
 
-  const storeFile = vscode.commands.registerCommand('config-sync.storeFile', async () => {
+  const fetchFile = async () => {
     const fileNameInput = await vscode.window.showInputBox({
       prompt: extName(`Please enter the file name relative to workspace directory. For example: '.gitignore' or src/config/.eslintrc.js`),
       ignoreFocusOut: true,
@@ -91,15 +91,10 @@ export const activate = async (context: vscode.ExtensionContext) => {
       return;
     }
 
-    console.log(file[0]);
-
     vscode.window.showInformationMessage(extName(`Valid file located: '${fileNameInput}'.`));
 
     const contents = await vscode.workspace.fs.readFile(file[0]);
     const contentsString = Buffer.from(contents).toString();
-    console.log(contentsString);
-
-    const storageUri = context.globalStorageUri;
 
     let alias = '-';
 
@@ -116,6 +111,17 @@ export const activate = async (context: vscode.ExtensionContext) => {
 
       alias = tempAlias;
     }
+
+    return { fileNameInput: fileNameInput, contents: contents, contentsString: contentsString, alias: alias };
+  };
+
+  const storeFile = vscode.commands.registerCommand('config-sync.storeFile', async () => {
+    const data = await fetchFile();
+    if (data === undefined) { return; }
+
+    const { fileNameInput, contents, contentsString, alias } = data;
+      
+    const storageUri = context.globalStorageUri;
 
     let configFiles;
 
@@ -147,47 +153,11 @@ export const activate = async (context: vscode.ExtensionContext) => {
       vscode.window.showErrorMessage(extName(`Database is not connected. This is likely due to an invalid connection string. Please run 'config-sync: Add Connection to MongoDB Database'.`));
       return;
     }
-    const fileNameInput = await vscode.window.showInputBox({
-      prompt: extName(`Please enter the file name relative to workspace directory. For example: '.gitignore' or src/config/.eslintrc.js`),
-      ignoreFocusOut: true,
-      placeHolder: 'File name'
-    });
 
-    if (fileNameInput === undefined || fileNameInput === '') {
-      vscode.window.showErrorMessage(extName('Input was not captured.'));
-      return;
-    }
+    const data = await fetchFile();
+    if (data === undefined) { return; }
 
-    const file = await vscode.workspace.findFiles(fileNameInput, '', 1);
-
-    if (file.length === 0 || file[0] === undefined) {
-      vscode.window.showErrorMessage(extName(`Invalid file name: '${fileNameInput}'. Please make sure this is a file name relative to workspace directory.`));
-      return;
-    }
-
-    console.log(file[0]);
-
-    vscode.window.showInformationMessage(extName(`Valid file located: '${fileNameInput}'.`));
-
-    const contents = await vscode.workspace.fs.readFile(file[0]);
-    const contentsString = Buffer.from(contents).toString();
-    console.log(contentsString);
-
-    let alias = '-';
-
-    while (alias.includes('-')) {
-      const tempAlias = await vscode.window.showInputBox({
-        prompt: extName(`Please give this file an alias. The alias cannot contain dashes.`),
-        ignoreFocusOut: true,
-      });
-
-      if (tempAlias === undefined || tempAlias === '') {
-        vscode.window.showErrorMessage(extName('Input was not captured.'));
-        return;
-      }
-
-      alias = tempAlias;
-    }
+    const { fileNameInput, contents, contentsString, alias } = data;
 
     const fileName = generateFilename(fileNameInput.includes('/') ? fileNameInput.split('/').pop()! : fileNameInput, alias);
 
