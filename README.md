@@ -1,5 +1,5 @@
 <p align="left">
-    <img src="https://github.com/tonylizj/config-sync/blob/master/ic_launcher.png" height="128">
+    <img src="https://raw.githubusercontent.com/tonylizj/config-sync/master/ic_launcher.png" height="128">
 </p>
 
 # config-sync README
